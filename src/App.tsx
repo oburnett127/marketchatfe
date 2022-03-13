@@ -2,10 +2,12 @@ import React from 'react';
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { About, Home, Posts, Profile, SignIn, SignUp } from './pages/';
+import Navigation from './components/Navigation/Navigation';
 
 function App() {
   return (
     <Router>
+      <Navigation />
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/posts' element={<Posts />} />

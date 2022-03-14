@@ -8,7 +8,7 @@ export interface INavButtonProps {
 
 const NavButton: React.FC<INavButtonProps> = ({ to, children }) => {
   return (
-    <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full'>
+    <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg'>
       <Link to={to}>{children}</Link>
     </button>
   );

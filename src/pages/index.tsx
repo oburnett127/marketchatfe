@@ -1,8 +1,9 @@
 import About from './About/About';
 import Home from './Home/Home';
-import Posts from './Posts/Posts';
-import Profile from './Profile/Profile';
-import SignIn from './SignIn/SignIn';
+import Post from './Post/Post.jsx';
+import Posts from './Posts/Posts.jsx';
+import Profile from './Profile/Profile.jsx';
+import SignIn from './SignIn/SignIn.jsx';
 import SignUp from './SignUp/SignUp';
 
-export { About, Home, Posts, Profile, SignIn, SignUp };
+export { About, Home, Post, Posts, Profile, SignIn, SignUp };

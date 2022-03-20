@@ -15,9 +15,14 @@ function App() {
           <Route path='/' element={<Home />} />
           <Route path='/posts' element={<Posts />} />
           <Route path='/posts/:postId' element={<Post />} />
+          <Route path='/users/' element={<div>Users</div>} />
+          <Route
+            path='/users/:userId'
+            element={<Profile isOwnProfile={false} />}
+          />
           <Route path='/signin' element={<SignIn />} />
           <Route path='/signup' element={<SignUp />} />
-          <Route path='/profile' element={<Profile />} />
+          <Route path='/profile' element={<Profile isOwnProfile={true} />} />
           <Route path='/about' element={<About />} />
         </Routes>
         <Footer />

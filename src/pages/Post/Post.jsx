@@ -25,7 +25,7 @@ function Post() {
   }, []);
 
   return (
-    <div className='min-h-screen px-44 '>
+    <div className='min-h-screen px-44 bg-slate-200 dark:bg-stone-900 text-neutral-900 dark:text-white'>
       <h1 className='text-3xl mb-10 text-center'>
         Comments for Post with ID {postId}
       </h1>

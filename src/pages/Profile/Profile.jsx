@@ -24,7 +24,7 @@ const Profile = ({ isOwnProfile }) => {
   );
 
   const renderedHeader = isOwnProfile ? (
-    <div>
+    <div className=''>
       <h1>This is Your Profile Page</h1>
       <p>
         Here the user can view / edit information such as his avatar image and
@@ -36,7 +36,7 @@ const Profile = ({ isOwnProfile }) => {
   );
 
   return (
-    <div className='min-h-screen px-44 text-center'>
+    <div className='min-h-screen px-44 text-center bg-white dark:bg-stone-900 text-neutral-900 dark:text-white'>
       <h1 className='text-3xl mb-10'>{renderedHeader}</h1>
 
       {user && (

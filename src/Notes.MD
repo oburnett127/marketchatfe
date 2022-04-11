@@ -1,5 +1,10 @@
 # Notes
 
+## TO-DO's
+
+- The 'createdAt' and 'updatedAt' properties created automatically by Mongoose -- is there a way to make them use MomentJS dates instead?
+  - If not, how do we convert their format to one which Moment will use?
+
 ## Landing Page
 
 - Maybe just some default Post List for a sub-forum
@@ -32,4 +37,3 @@ When viewing an actual individual Post, we will need:
   - Will need to fetch these at this time, as it would be highly inefficient to fetch them on Post List
 - Ability to Sort by some criteria
 - Ability to type your own response in an input
-

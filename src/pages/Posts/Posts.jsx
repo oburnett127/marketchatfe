@@ -1,102 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import moment from 'moment';
-
-const mockUsers = [
-  'sugarsnuffle',
-  'vineail',
-  'brawnymute',
-  'dodgeballwidely',
-  'feistyexhibition',
-  'woofcroquet',
-  'flaxseedcomet',
-  'lawonerous',
-  'strongbegan',
-  'erstmystery',
-  'bulletgrounded',
-  'ailservice',
-  'relybeans',
-  'centerden',
-  'trialyourself',
-  'claimconclude',
-  'readmainly',
-  'decreasingslacks',
-  'inbornconspiracy',
-  'draconianimportant',
-  'pageantryelytra',
-  'truthfuzzy',
-  'variouscuddly',
-  'undergoevening',
-  'cottonpurpur',
-  'canceldeparture',
-  'excellentsignal',
-  'poursmirk',
-  'panzebra',
-  'bloathoop',
-  'fatherlethargic',
-  'weepingmilky',
-  'garboardabstracted',
-  'doofuscollected',
-  'irritatedinning',
-  'comeclove',
-  'wageflint',
-  'cellwimp',
-  'stripedrent',
-  'poopspring',
-  'enchiladafaulty',
-  'onionscoffle',
-  'querulousregional',
-  'treblewander',
-  'unlockpatsy',
-  'divorcesunbonnet',
-  'worseimpartial',
-  'barksecond',
-  'rejectkind',
-  'reliablelard',
-];
-
-const mockCommentList = [
-  'Lorem ipsum dolor sit amet.',
-  'Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio, ratione.',
-  'Lorem, ipsum dolor.',
-  'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quia odio modi nisi facilis eligendi nobis!',
-  'Lorem ipsum dolor sit, amet consectetur adipisicing elit.',
-  'Lorem ipsum dolor sit.',
-  'Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero, aliquam nesciunt.',
-];
-
-const createRandomAuthor = () => {
-  return mockUsers[Math.floor(Math.random() * mockUsers.length)];
-};
-
-const createRandomComments = () => {
-  const numRandomComments = Math.floor(Math.random() * 100);
-  const randomComments = [];
-
-  for (let i = 0; i < numRandomComments; i++) {
-    randomComments.push(Math.floor(Math.random() * mockCommentList.length));
-  }
-
-  return randomComments;
-};
-
-const createRandomCreationDate = () => {
-  const year = 2022; // Keep it simple!
-  const randomMonth = Math.floor(Math.random() * 4) + 1;
-  const randomDay = Math.floor(Math.random() * 9) + 1;
-
-  const randomDateString = `${year}${('0' + randomMonth).slice(-2)}${(
-    '0' + randomDay
-  ).slice(-2)}`;
-
-  return randomDateString;
-};
+import * as mockData from '../../mockData';
 
 function Posts() {
   const [posts, setPosts] = useState([]);
   const [databasePosts, setDatabasePosts] = useState([]);
 
   // For Sorting / Filtering
+  // TODO: Does this need to be a state, really? Or just an effect of posts?
   const [sortCriteria, setSortCriteria] = useState('date');
 
   // We'll programatically navigate when the outer div of a Post is clicked
@@ -109,15 +21,15 @@ function Posts() {
       .then((data) => {
         const dataWithAdditions = data.map((post) => ({
           ...post,
-          author: createRandomAuthor(),
-          comments: createRandomComments(),
-          creationDate: createRandomCreationDate(),
+          author: mockData.getRandomAuthor(),
+          comments: mockData.createRandomComments(),
+          createdAt: mockData.createRandomCreationDate(),
         }));
         setPosts(dataWithAdditions);
-        console.table(dataWithAdditions);
+        // console.table(dataWithAdditions);
       });
 
-    fetch('http://localhost:5000/api/comments')
+    fetch('http://localhost:5000/api/posts')
       .then((response) => response.json())
       .then((data) => setDatabasePosts(data))
       .catch((err) => console.log('Failed to fetch MongoDB users'));
@@ -129,65 +41,104 @@ function Posts() {
   };
 
   const handleOnSortChange = (event) => {
-    // TODO: Does this need to be a state, really?
-    setSortCriteria(event.target.value);
+    // setSortCriteria(event.target.value);
 
     console.log(`Sorting by ${event.target.value}`);
 
     // Can't really do anything fancy by sorting every potential criteria using the same line of code (i.e b[criteria] - b[criteria])) because
     // some sorts require deeper logic than that. So we will just use a switch statement
     let sortedPosts = posts;
+    let sortedDatabasePosts = databasePosts;
 
     switch (event.target.value) {
       case 'comments':
-        sortedPosts = posts.sort((a, b) => {
-          return b.comments.length - a.comments.length;
-        });
-        console.log('Sorted by Comments - Most!');
+        // setPosts((posts) =>
+        //   [...posts].sort((a, b) => b.comments.length - a.comments.length)
+        // );
+        sortedPosts = [...posts].sort(
+          (a, b) => b.comments.length - a.comments.length
+        );
+
+        sortedDatabasePosts = [...databasePosts].sort(
+          (a, b) => b.comments.length - a.comments.length
+        );
         break;
       case 'comments-asc':
-        sortedPosts = posts.sort((a, b) => {
-          return a.comments.length - b.comments.length;
-        });
-        console.log('Sorted by Comments - Least!');
+        sortedPosts = [...posts].sort(
+          (a, b) => a.comments.length - b.comments.length
+        );
+        sortedDatabasePosts = [...databasePosts].sort(
+          (a, b) => a.comments.length - b.comments.length
+        );
         break;
       case 'date':
-        posts.sort((a, b) => {
+        sortedPosts = [...posts].sort((a, b) => {
           return (
-            new moment(b.creationDate).format('YYYYMMDD') -
-            new moment(a.creationDate).format('YYYYMMDD')
+            new moment(b.createdAt).format('YYYYMMDD') -
+            new moment(a.createdAt).format('YYYYMMDD')
           );
         });
-        console.log('Sorted by Date - Descending!');
+        sortedDatabasePosts = [...databasePosts].sort((a, b) => {
+          return (
+            new moment(b.createdAt).format('YYYY-MM-DD') -
+            new moment(a.createdAt).format('YYYY-MM-DD')
+          );
+        });
         break;
       case 'date-asc':
-        posts.sort((a, b) => {
+        sortedPosts = [...posts].sort((a, b) => {
           return (
-            new moment(a.creationDate).format('YYYYMMDD') -
-            new moment(b.creationDate).format('YYYYMMDD')
+            new moment(a.createdAt).format('YYYYMMDD') -
+            new moment(b.createdAt).format('YYYYMMDD')
           );
         });
-        console.log('Sorted by Date - Ascending!');
+        sortedDatabasePosts = [...databasePosts].sort((a, b) => {
+          return (
+            new moment(a.createdAt).format('YYYY-MM-DD') -
+            new moment(b.createdAt).format('YYYY-MM-DD')
+          );
+        });
         break;
       case 'author-asc':
-        posts.sort((a, b) => {
-          return a.author > b.author ? 1 : b.author > a.author ? -1 : 0;
+        sortedPosts = [...posts].sort((a, b) => {
+          return a.author.toLowerCase() > b.author.toLowerCase()
+            ? 1
+            : b.author.toLowerCase() > a.author.toLowerCase()
+            ? -1
+            : 0;
         });
-        console.log('Sorted by Author - Ascending!');
+        sortedDatabasePosts = [...databasePosts].sort((a, b) => {
+          return a.author.toLowerCase() > b.author.toLowerCase()
+            ? 1
+            : b.author.toLowerCase() > a.author.toLowerCase()
+            ? -1
+            : 0;
+        });
         break;
       case 'author':
-        posts.sort((a, b) => {
-          return a.author < b.author ? 1 : b.author < a.author ? -1 : 0;
+        sortedPosts = [...posts].sort((a, b) => {
+          return a.author.toLowerCase() < b.author.toLowerCase()
+            ? 1
+            : b.author.toLowerCase() < a.author.toLowerCase()
+            ? -1
+            : 0;
         });
-        console.log('Sorted by Author - Descending!');
+        sortedDatabasePosts = [...databasePosts].sort((a, b) => {
+          return a.author.toLowerCase() < b.author.toLowerCase()
+            ? 1
+            : b.author.toLowerCase() < a.author.toLowerCase()
+            ? -1
+            : 0;
+        });
         break;
       default:
         break;
     }
 
+    console.table(sortedDatabasePosts);
     console.table(sortedPosts);
-
     setPosts(sortedPosts);
+    setDatabasePosts(sortedDatabasePosts);
   };
 
   if (!posts) return <div>Fetching Posts...</div>;
@@ -269,8 +220,8 @@ function Posts() {
           {databasePosts.map((post) => {
             return (
               <div
-                onClick={() => handleOnClick(post.id)}
-                key={post.id}
+                onClick={() => handleOnClick(post._id)}
+                key={post._id}
                 // to={`/posts/${post._id}`}
                 className='bg-blue-100 dark:bg-blue-900 p-4 rounded-lg border-solid border border-white hover:border-blue-500'
               >
@@ -289,16 +240,18 @@ function Posts() {
                   </span>
                   <span className='text-gray-400'>
                     {' '}
-                    {moment(post.creationDate, 'YYYYMMDD').fromNow()}
+                    {/* {moment(post.createdAt, 'YYYYMMDD').fromNow()} */}
+                    {/* {moment(post.createdAt).format('MMMM Do YYYY, h:mm:ss a')} */}
+                    {moment(post.createdAt).calendar()}
                   </span>
                 </div>
                 <h2 className='text-xl font-bold'>{post.title}</h2>
                 <p className='py-2'>{post.body}</p>
                 <Link
-                  to={`/posts/${post.id}`}
+                  to={`/posts/${post._id}`}
                   className='p-1 rounded hover:bg-blue-200 dark:hover:bg-blue-600'
                 >
-                  1 comment
+                  {post.comments.length} comments
                 </Link>
               </div>
             );
@@ -328,7 +281,7 @@ function Posts() {
                   </span>
                   <span className='text-gray-400'>
                     {' '}
-                    {moment(post.creationDate, 'YYYYMMDD').fromNow()}
+                    {moment(post.createdAt, 'YYYYMMDD').fromNow()}
                   </span>
                 </div>
                 <h2 className='text-xl font-bold'>{post.title}</h2>

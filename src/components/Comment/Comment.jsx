@@ -2,19 +2,30 @@ import React from 'react';
 import moment from 'moment';
 import { TiArrowDownOutline, TiArrowUpOutline } from 'react-icons/ti';
 
-function Comment({ comment, onHandleVote }) {
+function Comment({ comment, onHandleVote, onClickReply }) {
+  const handleClickReply = (commentID) => {
+    onClickReply(commentID);
+  };
+
   return (
     <div className='border-l-2 border-l-blue-500 dark:bg-stone-900 py-2'>
       <div className='flex flex-row gap-4 pl-4 items-center'>
-        <div className='inline-block rounded-full bg-blue-500 w-8 h-8'></div>
-        <span className='text-md font-bold'>{comment.author}</span>
+        <div className='inline-block rounded-full bg-blue-500 w-8 h-8 overflow-hidden'>
+          <img
+            src={`${comment.userRef ? comment.userRef.imageURL : ''}`}
+            alt=''
+          />
+        </div>
+        <span className='text-md font-bold'>
+          {comment.userRef ? comment.userRef.username : 'Unknown'}
+        </span>
         <span className='text-gray-400'>
           {' '}
           {moment(comment.createdAt).fromNow()}
         </span>
       </div>
       <p className='pl-4 my-3'>{comment.body}</p>
-      <div className='pl-4 flex flex-row'>
+      <div className='pl-4 flex flex-row items-center'>
         <TiArrowUpOutline
           // onMouseOver={({ target }) =>
           //   (target.style.color = 'yellow')
@@ -34,7 +45,12 @@ function Comment({ comment, onHandleVote }) {
           }
         />
         <span className='ml-1'>{comment.dislikes}</span>
-        <p className='ml-6'>Reply</p>
+        <p
+          className='cursor-pointer ml-6 rounded hover:bg-blue-100 dark:hover:bg-stone-700 py-2 px-2'
+          onClick={() => handleClickReply(comment._id)}
+        >
+          Reply
+        </p>
       </div>
     </div>
   );

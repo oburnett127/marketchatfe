@@ -3,6 +3,7 @@ import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { TiArrowDownOutline, TiArrowUpOutline } from 'react-icons/ti';
 import { IoChatboxOutline } from 'react-icons/io5';
+import PostHeader from '../Post/PostHeader';
 
 function PostPreview({ post, handleOnClick, handleOnVote }) {
   console.log('POST', post);
@@ -19,7 +20,7 @@ function PostPreview({ post, handleOnClick, handleOnVote }) {
       className='overflow-hidden flex items-stretch cursor-pointer bg-white dark:bg-stone-800 rounded-lg border-solid border border-stone-400 hover:border-stone-100'
     >
       {/* Side Voting Bar */}
-      <div className='bg-slate-200 dark:text-white dark:bg-zinc-900 flex flex-col items-center gap-1 py-2 px-1 text-md'>
+      <div className='bg-slate-200 dark:text-white dark:bg-zinc-900 flex flex-col items-center gap-1 pb-2 pt-4 px-1 text-md'>
         {/* <div>{post.likes}</div> */}
         <TiArrowUpOutline
           size={25}
@@ -44,19 +45,7 @@ function PostPreview({ post, handleOnClick, handleOnVote }) {
       <div className='py-2 px-2 truncate'>
         <div className='flex flex-col justify-between min-h-full'>
           <div className='px-2'>
-            <Link to={`/r/stocks`} className='font-bold'>
-              r/stocks
-            </Link>{' '}
-            <span className='text-gray-400 '>
-              Posted by{' '}
-              <Link to={`/users/${post.author}`} className='hover:underline'>
-                {post.author}
-              </Link>{' '}
-            </span>
-            <span className='text-gray-400'>
-              {' '}
-              {moment(post.createdAt).calendar()}
-            </span>
+            <PostHeader post={post} />
             <h2 className='my-2 text-xl font-bold'>{post.title}</h2>
             <p className='truncate'>{post.body}</p>
           </div>

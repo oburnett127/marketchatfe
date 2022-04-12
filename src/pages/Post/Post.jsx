@@ -3,17 +3,19 @@ import { useParams } from 'react-router-dom';
 import * as mockData from '../../mockData';
 import Comment from '../../components/Comment/Comment';
 import ReplyForm from '../../components/ReplyForm';
+import moment from 'moment';
+import { Link } from 'react-router-dom';
+import { IoChatboxOutline } from 'react-icons/io5';
+import PostHeader from './PostHeader';
 
 function Post() {
   const { postId } = useParams();
   const [post, setPost] = useState();
-  const textareaRef = useRef(null);
-
-  // const [comments, setComments] = useState([]);
 
   useEffect(() => {
     // Fetch Post from our own backend!
     // TODO: Proxy doesn't seem to be working -- it's using localhost:3000 even though I set to 5000!
+    console.log('POST ID', postId);
     fetch(`http://localhost:5000/api/posts/${postId}/comments`)
       .then((response) => response.json())
       .then((data) => {
@@ -23,10 +25,23 @@ function Post() {
   }, []);
 
   const addRandomComment = (event) => {
+    const userRefList = [
+      '6255df9f31f756e4bbc62ce3',
+      '6255df8631f756e4bbc62ce1',
+      '6255df6c31f756e4bbc62cdf',
+      '6255df3d31f756e4bbc62cdd',
+      '6255dee931f756e4bbc62cdb',
+    ];
+
+    const randomUserRef =
+      userRefList[Math.floor(Math.random() * userRefList.length)];
+
     fetch(`http://localhost:5000/api/posts/${postId}/comments`, {
       method: 'POST',
       body: JSON.stringify({
-        author: mockData.getRandomAuthor(),
+        // author: mockData.getRandomAuthor(),
+        author: randomUserRef,
+        userRef: randomUserRef,
         body: mockData.getRandomCommentBody(),
       }),
       headers: {
@@ -97,6 +112,14 @@ function Post() {
       .catch((error) => console.log('Error creating user reply: ', error));
   };
 
+  const onClickReply = (commentID) => {
+    // Do stuff with commentID
+    // TODO: We need a reference to the reply form's input!
+    // textareaRef.current.value = `@${commentID}`;
+
+    console.log('Comment ID', commentID);
+  };
+
   return (
     <div className='min-h-screen px-4 py-10 bg-slate-200 dark:bg-stone-900 text-neutral-900 dark:text-white'>
       <div className='m-auto max-w-screen-lg'>
@@ -104,21 +127,23 @@ function Post() {
           Comments for Post with ID {postId}
         </h1> */}
         <div className='mb-10 p-4  dark:bg-stone-900'>
-          <h2 className='mb-4 text-3xl font-bold'>{post && post.title}</h2>
+          <PostHeader post={post} />
+          <h2 className='my-2 mb-4 text-3xl font-bold'>{post && post.title}</h2>
           <p>{post && post.body}</p>
+          <div className='inline-flex items-center gap-2 rounded mt-1 py-2'>
+            <IoChatboxOutline size={25} />
+            <div>{post.comments.length} comments</div>
+          </div>
         </div>
-
         <button
           onClick={addRandomComment}
           className='ml-4 mb-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg'
         >
           Create Random Comment
         </button>
-
         <div className='pl-3'>
           <ReplyForm onHandleReplySubmit={onHandleReplySubmit} />
         </div>
-
         {/* List of Posts */}
         <div className='flex flex-col gap-8 text-left p-4 dark:bg-stone-900'>
           {post.comments &&
@@ -128,6 +153,7 @@ function Post() {
                   key={comment._id}
                   comment={comment}
                   onHandleVote={onHandleVote}
+                  onClickReply={onClickReply}
                 />
               );
             })}

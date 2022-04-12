@@ -25,10 +25,22 @@ function Posts() {
   }, []);
 
   const addRandomPost = (event) => {
+    const userRefList = [
+      '6255df9f31f756e4bbc62ce3',
+      '6255df8631f756e4bbc62ce1',
+      '6255df6c31f756e4bbc62cdf',
+      '6255df3d31f756e4bbc62cdd',
+      '6255dee931f756e4bbc62cdb',
+    ];
+
+    const randomUserRef =
+      userRefList[Math.floor(Math.random() * userRefList.length)];
     fetch(`http://localhost:5000/api/posts/`, {
       method: 'POST',
       body: JSON.stringify({
-        author: mockData.getRandomAuthor(),
+        // author: mockData.getRandomAuthor(),
+        author: randomUserRef,
+        userRef: randomUserRef,
         title: mockData.getRandomTitle(),
         body: mockData.getRandomCommentBody(),
       }),

@@ -3,7 +3,11 @@
 ## TO-DO's
 
 - The 'createdAt' and 'updatedAt' properties created automatically by Mongoose -- is there a way to make them use MomentJS dates instead?
+
   - If not, how do we convert their format to one which Moment will use?
+
+- If we create a new Comment (probably Post, too) and it fails Mongoose validation, it will still show up on the frontend UI until page refresh
+  - It does this because instead of re-fetching the data after creating a new comment, we simply update the state by falsely assuming everything went well on teh backend
 
 ## Landing Page
 

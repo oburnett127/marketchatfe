@@ -7,6 +7,10 @@ module.exports = {
       colors: {},
       backgroundImage: {},
     },
+    fontFamily: {
+      sans: ['Poppins', 'sans-serif'],
+      heading: ['Poppins', 'sans-serif'],
+    },
   },
   plugins: [require('@tailwindcss/forms')],
 };

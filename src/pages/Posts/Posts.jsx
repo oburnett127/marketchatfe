@@ -4,6 +4,7 @@ import moment from 'moment';
 import * as mockData from '../../mockData';
 import PostSelect from '../../components/PostSelect';
 import PostPreview from './PostPreview';
+import postSorter from '../../utils/postSorter';
 
 function Posts() {
   // const [posts, setPosts] = useState([]);
@@ -13,7 +14,7 @@ function Posts() {
   // TODO: Does this need to be a state, really? Or just an effect of posts?
   const [sortCriteria, setSortCriteria] = useState('date');
 
-  // We'll programatically navigate when the outer div of a Post is clicked
+  // We'll programmatically navigate when the outer div of a Post is clicked
   // This prevents React complaining about 'anchor inside of anchor'!
   const navigate = useNavigate();
 
@@ -33,8 +34,7 @@ function Posts() {
       '6255dee931f756e4bbc62cdb',
     ];
 
-    const randomUserRef =
-      userRefList[Math.floor(Math.random() * userRefList.length)];
+    const randomUserRef = userRefList[Math.floor(Math.random() * userRefList.length)];
     fetch(`http://localhost:5000/api/posts/`, {
       method: 'POST',
       body: JSON.stringify({
@@ -62,71 +62,7 @@ function Posts() {
   };
 
   const handleOnSortChange = (event) => {
-    console.log(`Sorting by ${event.target.value}`);
-
-    // Can't really do anything fancy by sorting every potential criteria using the same line of code (i.e b[criteria] - b[criteria])) because
-    // some sorts require deeper logic than that. So we will just use a switch statement
-    // let sortedPosts = posts;
-    let sortedDatabasePosts = databasePosts;
-
-    switch (event.target.value) {
-      case 'comments':
-        sortedDatabasePosts = [...databasePosts].sort(
-          (a, b) => b.comments.length - a.comments.length
-        );
-        break;
-      case 'comments-asc':
-        sortedDatabasePosts = [...databasePosts].sort(
-          (a, b) => a.comments.length - b.comments.length
-        );
-        break;
-      case 'date':
-        sortedDatabasePosts = [...databasePosts].sort((a, b) => {
-          return (
-            new moment(new Date(b.createdAt)) -
-            new moment(new Date(a.createdAt))
-          );
-        });
-        break;
-      case 'date-asc':
-        sortedDatabasePosts = [...databasePosts].sort((a, b) => {
-          return (
-            new moment(new Date(a.createdAt)) -
-            new moment(new Date(b.createdAt))
-          );
-        });
-        break;
-      case 'author-asc':
-        sortedDatabasePosts = [...databasePosts].sort((a, b) => {
-          return a.author.toLowerCase() > b.author.toLowerCase()
-            ? 1
-            : b.author.toLowerCase() > a.author.toLowerCase()
-            ? -1
-            : 0;
-        });
-        break;
-      case 'author':
-        sortedDatabasePosts = [...databasePosts].sort((a, b) => {
-          return a.author.toLowerCase() < b.author.toLowerCase()
-            ? 1
-            : b.author.toLowerCase() < a.author.toLowerCase()
-            ? -1
-            : 0;
-        });
-        break;
-      case 'likes':
-        sortedDatabasePosts = [...databasePosts].sort((a, b) => {
-          return b.likes - a.likes;
-        });
-        break;
-      case 'likes-asc':
-        sortedDatabasePosts = [...databasePosts].sort((a, b) => {
-          return a.likes - b.likes;
-        });
-        break;
-      default:
-        break;
-    }
+    const sortedDatabasePosts = postSorter.sortBy(event.target.value, databasePosts);
 
     setDatabasePosts(sortedDatabasePosts);
   };
@@ -138,8 +74,7 @@ function Posts() {
       body: JSON.stringify({
         // Why didn't we have to parse this for a Comment's Likes/Dislikes?!
         likes: delta > 0 ? parseInt(currentLikes) + 1 : parseInt(currentLikes),
-        dislikes:
-          delta < 0 ? parseInt(currentDislikes) + 1 : parseInt(currentDislikes),
+        dislikes: delta < 0 ? parseInt(currentDislikes) + 1 : parseInt(currentDislikes),
       }),
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
@@ -164,8 +99,8 @@ function Posts() {
       <div className='m-auto max-w-screen-lg py-10'>
         <h1 className='text-3xl mb-10'>Posts (Message Board)</h1>
         <p className='mb-10'>
-          Here we will see a list of Posts created by the community. There will
-          also probably be a way to sort / filter posts by various criteria.
+          Here we will see a list of Posts created by the community. There will also probably be a way to sort / filter
+          posts by various criteria.
         </p>
 
         <PostSelect handleOnSortChange={handleOnSortChange} />
@@ -179,14 +114,7 @@ function Posts() {
 
         <div className='flex flex-col gap-4 text-left my-6'>
           {databasePosts.map((post) => {
-            return (
-              <PostPreview
-                key={post._id}
-                post={post}
-                handleOnClick={handleOnClick}
-                handleOnVote={handleOnVote}
-              />
-            );
+            return <PostPreview key={post._id} post={post} handleOnClick={handleOnClick} handleOnVote={handleOnVote} />;
           })}
         </div>
       </div>

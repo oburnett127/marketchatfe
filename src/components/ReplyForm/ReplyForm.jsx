@@ -6,7 +6,7 @@ function ReplyForm({ onHandleReplySubmit }) {
   return (
     // TODO: Can make a message that is too short to pass backend validation, but it still goes through as blank
     // TODO: Fix that ^ !
-    <div className='flex mx-auto items-center justify-center mt-2 mb-4 max-w-screen-lg bg-stone-900 rounded-xl'>
+    <div className='flex mx-auto items-center justify-center mt-2 mb-4 max-w-screen-lg rounded-xl text-center bg-slate-200 dark:bg-stone-900 text-neutral-900 dark:text-white'>
       <form
         className='w-full max-w-screen-lg rounded-lg px-4 pt-2'
         onSubmit={(event) => onHandleReplySubmit(event, textareaRef)}
@@ -25,12 +25,7 @@ function ReplyForm({ onHandleReplySubmit }) {
           </div>
           <div className='w-full md:w-full flex items-start px-3'>
             <div className='flex items-start w-1/2 text-gray-400 px-2 mr-auto'>
-              <svg
-                fill='none'
-                className='w-5 h-5 text-gray-600 mr-1'
-                viewBox='0 0 24 24'
-                stroke='currentColor'
-              >
+              <svg fill='none' className='w-5 h-5 text-gray-600 mr-1' viewBox='0 0 24 24' stroke='currentColor'>
                 <path
                   strokeLinecap='round'
                   strokeLinejoin='round'
